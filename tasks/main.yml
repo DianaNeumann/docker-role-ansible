@@ -1,0 +1,32 @@
+---
+- name: Install required dependencies
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: present
+    update_cache: yes
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker APT repository
+  apt_repository:
+    repo: "deb [arch={{ docker_architecture }}] {{ docker_repo_url }}/linux/ubuntu {{ docker_repo_codename }} stable"
+    state: present
+
+- name: Install Docker
+  apt:
+    name: "{{ docker_package }}"
+    version: "{{ docker_version }}"
+    state: present
+
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
